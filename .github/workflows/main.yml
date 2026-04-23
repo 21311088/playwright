@@ -1,11 +1,11 @@
-name: Download Playwright Browsers (Windows)
+name: Download Playwright Browsers (Linux)
 
 on:
   workflow_dispatch:
 
 jobs:
   download:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
@@ -18,14 +18,18 @@ jobs:
       - name: Install Playwright
         run: npm install playwright
 
-      - name: Install Browsers
-        run: npx playwright install
+      - name: Install Browsers (Linux)
+        run: npx playwright install --force
+
+      - name: Show browser path (debug)
+        run: ls -R ~/.cache/ms-playwright || true
 
       - name: Zip browsers
-        run: powershell Compress-Archive -Path $env:USERPROFILE\AppData\Local\ms-playwright -DestinationPath browsers.zip
+        run: |
+          zip -r browsers.zip ~/.cache/ms-playwright
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-browsers-windows
+          name: playwright-browsers-linux
           path: browsers.zip
