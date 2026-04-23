@@ -1,0 +1,31 @@
+name: Download Playwright Browsers (Windows)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  download:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install Playwright
+        run: npm install playwright
+
+      - name: Install Browsers
+        run: npx playwright install
+
+      - name: Zip browsers
+        run: powershell Compress-Archive -Path $env:USERPROFILE\AppData\Local\ms-playwright -DestinationPath browsers.zip
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-browsers-windows
+          path: browsers.zip
